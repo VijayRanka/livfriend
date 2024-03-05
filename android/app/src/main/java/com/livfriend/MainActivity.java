@@ -1,4 +1,4 @@
-package com.livfriend.livefriend;
+package app.livfriend;
 
 import io.flutter.embedding.android.FlutterActivity;
 
