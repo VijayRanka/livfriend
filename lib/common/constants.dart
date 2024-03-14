@@ -16,6 +16,7 @@ class Constants {
       'Your Internet Connection\nmay not be active';
 
   static String lightLogo = "assets/images/logo.png";
+  static String otpLogo = "assets/images/otp_confirm.json";
 
   static String prefWebsite = "prefWebsite";
   static String directLink = "directLink";
@@ -23,4 +24,14 @@ class Constants {
   static String generatingKeyStore="keytool -genkey -v -keystore upload-keystore.jks -alias dailystock -keyalg RSA -sigalg SHA1withRSA -keysize 2048 -validity 10000 -storetype JKS";
   static String iconCommand = 'flutter pub run flutter_launcher_icons';
   static String sha1Command = ' keytool -list -v -keystore webappdemo.jks -alias webappdemo -storepass webappdemo -keypass webappdemo';
+
+  // paths routes
+  static String splashPath="/";
+  static String loginPath="/login";
+  static String dashboardPath="/dashboardPath";
+
+
+  // keys
+  static String isLogin="isLogin";
+
 }

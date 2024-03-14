@@ -9,6 +9,8 @@ import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/common/http_override.dart';
 import 'package:livefriend/common/navigator_helper.dart';
 import 'package:livefriend/common/preference_utils.dart';
+import 'package:livefriend/screens/dashboard/dashboard_screen.dart';
+import 'package:livefriend/screens/login/mobile_login.dart';
 import 'package:livefriend/screens/splash/splash_screen.dart';
 
 void main() async {
@@ -43,7 +45,9 @@ class MyApp extends StatelessWidget {
                     .platformBrightness),
         darkTheme: ThemeData.dark(),
         routes: {
-          "/": (_) => const SplashScreen(),
+          Constants.splashPath: (_) => const SplashScreen(),
+          Constants.loginPath: (_) => const LoginScreen(),
+          Constants.dashboardPath: (_) => const DashboardScreen(),
         },
         initialRoute: "/",
       ),

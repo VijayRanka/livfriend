@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:livefriend/common/constants.dart';
+import 'package:livefriend/common/preference_utils.dart';
 import 'package:livefriend/screens/common_widgets/custom_circular_widget.dart';
-import 'package:livefriend/screens/dashboard/dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -21,8 +21,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void startTimer({int time = 0}) {
     Future.delayed(Duration(seconds: time), () {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const DashboardScreen()));
+      if (PreferenceUtils.getBool(Constants.isLogin, defValue: false) ??
+          false) {
+        Navigator.of(context).pushReplacementNamed(Constants.dashboardPath);
+      } else {
+        Navigator.of(context).pushReplacementNamed(Constants.loginPath);
+      }
     });
   }
 
