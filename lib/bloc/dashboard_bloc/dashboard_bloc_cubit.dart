@@ -18,38 +18,7 @@ class DashboardBlocCubit extends Cubit<DashboardBlocState> {
   Future<void> getDashboardData() async {
     emit(DashboardBlocLoading());
     try {
-      var request =
-          http.MultipartRequest('POST', Uri.parse(Constants.webToAppURL));
-      request.fields.addAll({'appkey': Constants.appKey});
-      await request.send().then((response) async {
-        if (response.statusCode == 200) {
-          response.stream.bytesToString().then((responseStream) {
-            DashboardModel dashboardModel =
-                DashboardModel.fromJson(jsonDecode(responseStream));
-            if (dashboardModel.status ?? false) {
-              String directLink = PreferenceUtils.getString(
-                      Constants.directLink,
-                      defValue: Constants.defaultTawkToLink) ??
-                  Constants.defaultTawkToLink;
-              for (var item in dashboardModel.response ?? []) {
-                if (item.type == "directlink") {
-                  if (directLink !=
-                      (item.data[0].title ?? Constants.defaultTawkToLink)) {
-                    PreferenceUtils.setString(Constants.directLink,
-                            item.data[0].title ?? Constants.defaultTawkToLink)
-                        .then((value) {});
-                  }
-                }
-              }
-              emit(DashboardBlocInitial(
-                  websiteResponseList: dashboardModel.response ?? []));
-            }
-          });
-        } else {
-          Fluttertoast.showToast(msg: "Something Went Wrong");
-          emit(DashboardBlocFailed());
-        }
-      });
+
     } catch (e) {
       emit(DashboardBlocFailed());
     }

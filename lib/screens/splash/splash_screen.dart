@@ -21,6 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void startTimer({int time = 0}) {
     Future.delayed(Duration(seconds: time), () {
+      Constants.darkMode =
+          MediaQuery.of(context).platformBrightness == Brightness.dark;
+
       if (PreferenceUtils.getBool(Constants.isLogin, defValue: false) ??
           false) {
         Navigator.of(context).pushReplacementNamed(Constants.dashboardPath);

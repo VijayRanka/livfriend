@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/screens/common_widgets/status_bar_container.dart';
 
 class GirlDetailsScreen extends StatelessWidget {
@@ -271,7 +272,9 @@ class GirlDetailsScreen extends StatelessWidget {
                               Container(
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                    color: Colors.blue[100],
+                                    color: Constants.darkMode
+                                        ? Colors.blue[900]
+                                        : Colors.blue[100],
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Text(value),
                               ),
@@ -313,9 +316,11 @@ class GirlDetailsScreen extends StatelessWidget {
                             (key, value) => MapEntry(
                               key,
                               Container(
-                                padding: EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                    color: Colors.blue[100],
+                                    color: Constants.darkMode
+                                        ? Colors.blue[900]
+                                        : Colors.blue[100],
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Text(value),
                               ),

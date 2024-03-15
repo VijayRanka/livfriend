@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:livefriend/common/constants.dart';
 
 class TermsConditionText extends StatelessWidget {
   const TermsConditionText({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class TermsConditionText extends StatelessWidget {
       child: RichText(
         textAlign: TextAlign.center,
         text: TextSpan(
-            style: TextStyle(color: Colors.grey[700], fontSize: 15),
+            style: TextStyle(color: Constants.darkMode?Colors.white:Colors.grey[700], fontSize: 15),
             children: [
               TextSpan(text: "By signing up, you agree to our "),
               TextSpan(

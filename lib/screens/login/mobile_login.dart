@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:livefriend/api/rest_api.dart';
+import 'package:livefriend/common/common_circular_screen.dart';
 import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/screens/common_widgets/common_app_bar.dart';
 import 'package:livefriend/screens/common_widgets/common_submit_button.dart';
@@ -27,6 +32,40 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void initViews() {
     _loginController = TextEditingController();
+  }
+
+  Future<void> loginWithMobileNumber(String mobileNumber, int otp) async {
+    await APICalls.getResponse(
+        url: Constants.mainServerURL,
+        isPost: true,
+        body: {
+          "login_api": "login_api",
+          "otp": "$otp",
+          "mobile_number": "$mobileNumber"
+        }).then((response) {
+      setState(() {
+        isLoading = false;
+      });
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if (jsonResponse['status']) {
+          FocusScope.of(context).unfocus();
+
+          Fluttertoast.showToast(msg: jsonResponse['message']);
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => OtpVerifyScreen(
+                    mobileNumber: mobileNumber,
+                    otp: otp,
+                  )));
+        } else {
+          Fluttertoast.showToast(msg: jsonResponse['message']);
+        }
+      }
+    }).onError((error, stackTrace) {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
@@ -90,18 +129,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                       width: 1.0),
                                 ),
                               ),
-                              style: const TextStyle(
-                                  color: Color(0XFF444444), fontSize: 16),
+                              style: TextStyle(
+                                  color: Constants.darkMode
+                                      ? Colors.white
+                                      : Color(0XFF444444),
+                                  fontSize: 16),
                             ),
                           ),
                     CustomSubmitButton(
                         text: 'LOGIN',
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => OtpVerifyScreen(
-                                    mobileNumber: "7737133998",
-                                  )));
-
+                        onTap: () async {
                           if (_loginController != null) {
                             if (_loginController!.text.isEmpty) {
                               Fluttertoast.showToast(
@@ -115,23 +152,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               setState(() {
                                 isLoading = true;
                               });
+                              await loginWithMobileNumber(
+                                  _loginController!.text,
+                                  Random().nextInt(99999));
                             }
                           }
                         },
                         horizontalPadding: 15),
                   ]),
             ),
-           TermsConditionText(),
+            TermsConditionText(),
           ],
         ),
-        isLoading
-            ? Container(
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.5)),
-                child: const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : const SizedBox.shrink()
+         CommonCircularLoadingScreen(isLoading: isLoading,)
       ],
     ));
   }

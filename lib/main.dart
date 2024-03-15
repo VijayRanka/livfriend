@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
             brightness:
                 MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                     .platformBrightness),
+        // theme: ThemeData.dark(),
         darkTheme: ThemeData.dark(),
         routes: {
           Constants.splashPath: (_) => const SplashScreen(),
