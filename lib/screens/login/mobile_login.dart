@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:livefriend/api/rest_api.dart';
 import 'package:livefriend/common/common_circular_screen.dart';
+import 'package:livefriend/common/common_functions.dart';
 import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/screens/common_widgets/common_app_bar.dart';
 import 'package:livefriend/screens/common_widgets/common_submit_button.dart';
@@ -154,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               });
                               await loginWithMobileNumber(
                                   _loginController!.text,
-                                  Random().nextInt(99999));
+                                  CommonFunctions.getRandomOTP());
                             }
                           }
                         },
@@ -164,7 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
             TermsConditionText(),
           ],
         ),
-         CommonCircularLoadingScreen(isLoading: isLoading,)
+        CommonCircularLoadingScreen(
+          isLoading: isLoading,
+        )
       ],
     ));
   }

@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:livefriend/api/rest_api.dart';
 import 'package:livefriend/common/common_circular_screen.dart';
+import 'package:livefriend/common/common_functions.dart';
 import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/common/preference_utils.dart';
+import 'package:livefriend/model/user_model.dart';
 import 'package:livefriend/screens/common_widgets/common_app_bar.dart';
 import 'package:livefriend/screens/common_widgets/common_submit_button.dart';
 import 'package:livefriend/screens/common_widgets/terms_condition_text.dart';
@@ -16,9 +18,9 @@ import 'package:otp_text_field/style.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
   final String mobileNumber;
-  final int otp;
+  int otp;
 
-  const OtpVerifyScreen({this.mobileNumber = "-", this.otp = 123456, Key? key})
+  OtpVerifyScreen({this.mobileNumber = "-", this.otp = 12345, Key? key})
       : super(key: key);
 
   @override
@@ -27,9 +29,10 @@ class OtpVerifyScreen extends StatefulWidget {
 
 class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   OtpFieldController _otpFieldController = OtpFieldController();
-  int timerCount = 45;
+  int timerCount = 5;
   bool canResend = false, isLoading = false;
   Timer? _myTimer;
+  String otpValue = "";
 
   @override
   void initState() {
@@ -40,7 +43,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   void startTimer() {
     Future.delayed(Duration.zero, () {
       _myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (timerCount <= 0) {
+        if (timerCount <= 1) {
           timer.cancel();
           _myTimer?.cancel();
           setState(() {
@@ -68,21 +71,87 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
         isPost: true,
         body: {
           "register_api": "register_api",
-          "mobile_number": "${widget.mobileNumber}"
+          "mobile_number": "${widget.mobileNumber}",
         }).then((response) {
+      if (response.statusCode == 200) {
+        UserModel userModel = UserModel.fromJson(json.decode(response.body));
+        String message = userModel.message ?? "";
+        if (message != "") {
+          Fluttertoast.showToast(msg: (message));
+        }
+        if (userModel.status ?? false) {
+          PreferenceUtils.setBool(Constants.isLogin, true).then((value) {
+            PreferenceUtils.setString(
+                    Constants.userID, (userModel.userDetails?.id) ?? "")
+                .then((value) {
+              PreferenceUtils.setString(Constants.userMobile,
+                      (userModel.userDetails?.mobileNumber) ?? "")
+                  .then((value) {
+                PreferenceUtils.setString(Constants.userGender,
+                        (userModel.userDetails?.gender) ?? "")
+                    .then((value) {
+                  PreferenceUtils.setString(
+                          Constants.userDOB, (userModel.userDetails?.dob) ?? "")
+                      .then((value) {
+                    PreferenceUtils.setString(Constants.userDND,
+                            (userModel.userDetails?.dnd) ?? "")
+                        .then((value) {
+                      PreferenceUtils.setString(Constants.userMainImage,
+                              (userModel.userDetails?.mainImage) ?? "")
+                          .then((value) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        FocusScope.of(context).unfocus();
+                        Navigator.of(context).pop();
+                        Navigator.of(context)
+                            .pushReplacementNamed(Constants.dashboardPath);
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        } else {
+          if (message != "") {
+            Fluttertoast.showToast(msg: message);
+          }
+        }
+      }
+    }).onError((error, stackTrace) {
       setState(() {
         isLoading = false;
       });
+    });
+  }
+
+  Future<void> resentOtp() async {
+    setState(() {
+      timerCount = 45;
+      isLoading = true;
+    });
+    widget.otp = CommonFunctions.getRandomOTP();
+
+    await APICalls.getResponse(
+        url: Constants.mainServerURL,
+        isPost: true,
+        body: {
+          "login_api": "login_api",
+          "otp": "${widget.otp}",
+          "mobile_number": widget.mobileNumber
+        }).then((response) {
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
         if (jsonResponse['status']) {
+          FocusScope.of(context).unfocus();
           Fluttertoast.showToast(msg: jsonResponse['message']);
-
-          PreferenceUtils.setBool(Constants.isLogin, true).then((value) {
-            FocusScope.of(context).unfocus();
-            Navigator.of(context).pop();
-            Navigator.of(context).pushReplacementNamed(Constants.dashboardPath);
+          setState(() {
+            isLoading = false;
+            canResend = false;
+            timerCount = 45;
           });
+          startTimer();
         } else {
           Fluttertoast.showToast(msg: jsonResponse['message']);
         }
@@ -96,6 +165,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.otp);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -147,7 +217,11 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                           horizontal: 15.0, vertical: 20),
                       child: OTPTextField(
                         length: 5,
-                        onChanged: (_) {},
+                        onChanged: (value) {
+                          setState(() {
+                            otpValue = value;
+                          });
+                        },
                         controller: _otpFieldController,
                         width: MediaQuery.of(context).size.width,
                         fieldWidth: MediaQuery.of(context).size.width / 6,
@@ -161,7 +235,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                               isLoading = true;
                             });
                             await registerUser();
-                          }else{
+                          } else {
                             Fluttertoast.showToast(msg: "Wrong OTP");
                           }
                         },
@@ -174,7 +248,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                     GestureDetector(
                       onTap: () {
                         if (canResend) {
-                          Fluttertoast.showToast(msg: "Resend OTP");
+                          resentOtp();
                         }
                       },
                       child: Row(
@@ -196,6 +270,21 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                       height: 15,
                     ),
                     CustomSubmitButton(
+                      onTap: () async {
+                        if (otpValue.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: "Please fill otp and then proceed");
+                          return;
+                        } else if (otpValue != widget.otp.toString()) {
+                          Fluttertoast.showToast(msg: "Wrong OTP");
+                          return;
+                        } else if (otpValue == widget.otp.toString()) {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          await registerUser();
+                        }
+                      },
                       text: "VERIFY & PROCEED",
                       horizontalPadding: 15,
                     )

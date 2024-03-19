@@ -4,7 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:livefriend/bloc/dashboard_bloc/dashboard_bloc_cubit.dart';
+import 'package:livefriend/bloc/all_girls_cubit/all_girls_cubit.dart';
+import 'package:livefriend/bloc/followed_girls_cubit/followed_girls_cubit.dart';
+import 'package:livefriend/bloc/new_cubit/new_girl_cubit.dart';
+import 'package:livefriend/bloc/popular_cubit/popular_cubit.dart';
+import 'package:livefriend/bloc/talktime_cubit/talktime_cubit.dart';
+import 'package:livefriend/bloc/top_rated_cubit/top_rated_cubit.dart';
 import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/common/http_override.dart';
 import 'package:livefriend/common/navigator_helper.dart';
@@ -32,8 +37,23 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => DashboardBlocCubit(),
-        )
+          create: (_) => TopRatedCubit(),
+        ),
+        BlocProvider(
+          create: (_) => AllGirlsCubit(),
+        ),
+        BlocProvider(
+          create: (_) => FollowedGirlsCubit(),
+        ),
+        BlocProvider(
+          create: (_) => NewGirlCubit(),
+        ),
+        BlocProvider(
+          create: (_) => PopularCubit(),
+        ),
+        BlocProvider(
+          create: (_) => TalktimeCubit(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

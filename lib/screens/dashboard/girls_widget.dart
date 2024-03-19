@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:livefriend/bloc/top_rated_cubit/top_rated_cubit.dart';
 import 'package:livefriend/screens/common_widgets/status_bar_container.dart';
 import 'package:livefriend/screens/dashboard/talktime_price_widget.dart';
 import 'package:livefriend/screens/dashboard_girls_section/all_girls_dashboard.dart';
@@ -16,6 +18,18 @@ class GirlsDashboardWidget extends StatefulWidget {
 
 class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
   int tabIndex = 0;
+
+  @override
+  void initState() {
+    initViews();
+    super.initState();
+  }
+
+  void initViews() {
+    Future.delayed(Duration.zero, () {
+      BlocProvider.of<TopRatedCubit>(context).loadGirls();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

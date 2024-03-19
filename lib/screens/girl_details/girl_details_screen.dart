@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/screens/common_widgets/status_bar_container.dart';
 
-class GirlDetailsScreen extends StatelessWidget {
-  const GirlDetailsScreen({Key? key}) : super(key: key);
+class GirlDetailsScreen extends StatefulWidget {
+  final String girlId;
 
+  const GirlDetailsScreen({this.girlId = "-", Key? key}) : super(key: key);
+
+  @override
+  State<GirlDetailsScreen> createState() => _GirlDetailsScreenState();
+}
+
+class _GirlDetailsScreenState extends State<GirlDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

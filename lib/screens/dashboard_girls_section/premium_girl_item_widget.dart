@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:livefriend/screens/girl_details/girl_details_screen.dart';
 
-class PremiumGirlWidget extends StatelessWidget {
-  const PremiumGirlWidget({this.index = 0, Key? key}) : super(key: key);
-
+class PremiumGirlItemWidget extends StatelessWidget {
+  const PremiumGirlItemWidget(
+      {this.index = 0,
+      this.girlId = "-",
+      this.imagePath = "-",
+      this.girlName = "-",
+      Key? key})
+      : super(key: key);
+  final String girlId;
+  final String girlName;
+  final String imagePath;
   final int index;
 
   @override
@@ -11,19 +19,22 @@ class PremiumGirlWidget extends StatelessWidget {
     double width = 120;
     return GestureDetector(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const GirlDetailsScreen()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => GirlDetailsScreen(
+                      girlId: girlId,
+                    )));
       },
       child: Container(
         width: width,
-        alignment: Alignment.center,
         margin: EdgeInsets.only(left: index == 0 ? 10 : 0, right: 10),
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: Colors.grey.withOpacity(0.5),
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-              image: AssetImage(
-                "assets/images/girl.webp",
+              image: NetworkImage(
+                imagePath,
               ),
               fit: BoxFit.cover),
         ),
@@ -68,7 +79,7 @@ class PremiumGirlWidget extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   color: Colors.black.withOpacity(0.3),
                   child: Text(
-                    "Anupama",
+                    girlName,
                     style: TextStyle(color: Colors.white, fontSize: 14),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

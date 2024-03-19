@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:livefriend/common/common_functions.dart';
+import 'package:livefriend/common/constants.dart';
+import 'package:livefriend/common/preference_utils.dart';
 import 'package:livefriend/screens/common_widgets/common_app_bar.dart';
 import 'package:livefriend/screens/settings/dnd_settings_widget.dart';
 import 'package:livefriend/screens/settings/single_settings_widget.dart';
@@ -22,7 +25,19 @@ class SettingsScreen extends StatelessWidget {
           const DndSettingsWidget(),
           const SingleSettingsWidget(title: "Delete Account"),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              PreferenceUtils.setBool(
+                Constants.isLogin,
+                false,
+              ).then((value) {
+                PreferenceUtils.setString(
+                  Constants.userID,
+                  "",
+                ).then((value) {
+                  CommonFunctions.restartApp();
+                });
+              });
+            },
             child: Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.all(15),

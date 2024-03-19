@@ -7,8 +7,6 @@ class Constants {
   static String mainServerURL="https://192.168.29.137/selfprojects/livfriend/api/api.php";
 
 
-
-
   static String appName = 'LivFriend';
   static String language = 'Rosario';
   static String language1 = 'playfair';
@@ -38,5 +36,11 @@ class Constants {
 
   // keys
   static String isLogin="isLogin";
+  static String userID="userID";
+  static String userMobile="userMobile";
+  static String userGender="userGender";
+  static String userDOB="userDOB";
+  static String userMainImage="userMainImage";
+  static String userDND="userDND";
 
 }

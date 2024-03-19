@@ -32,11 +32,11 @@ class APICalls {
         Fluttertoast.showToast(
             msg: "Internal Server Error ${response.statusCode}");
       }
-    } catch (e) {
+    } catch (e,s) {
       if (e is SocketException) {
         Fluttertoast.showToast(msg: "No Internet Connection");
       }
-      debugPrint(e.toString());
+      debugPrint(s.toString());
     }
     return Future.value(response);
   }

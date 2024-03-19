@@ -46,6 +46,7 @@ dependencies:
   flutter_launcher_icons:
   otp_text_field:
   lottie:
+  firebase_messaging:
 
 dev_dependencies:
   flutter_test:
