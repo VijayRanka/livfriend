@@ -6,9 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:livefriend/bloc/all_girls_cubit/all_girls_cubit.dart';
 import 'package:livefriend/bloc/followed_girls_cubit/followed_girls_cubit.dart';
+import 'package:livefriend/bloc/girl_detail_cubit/girl_detail_cubit.dart';
 import 'package:livefriend/bloc/new_cubit/new_girl_cubit.dart';
 import 'package:livefriend/bloc/popular_cubit/popular_cubit.dart';
 import 'package:livefriend/bloc/talktime_cubit/talktime_cubit.dart';
+import 'package:livefriend/bloc/talktime_list_cubit/talktime_list_cubit.dart';
 import 'package:livefriend/bloc/top_rated_cubit/top_rated_cubit.dart';
 import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/common/http_override.dart';
@@ -53,6 +55,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => TalktimeCubit(),
+        ),BlocProvider(
+          create: (_) => GirlDetailCubit(),
+        ),BlocProvider(
+          create: (_) => TalktimeListCubit(),
         ),
       ],
       child: MaterialApp(

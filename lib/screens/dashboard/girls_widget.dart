@@ -59,7 +59,7 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
                         child: Text(
                           "Top Rated",
                           style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 16.5,
                               fontWeight: tabIndex == 0
                                   ? FontWeight.w600
                                   : FontWeight.w400),
@@ -70,7 +70,7 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
                         child: Text(
                           "New",
                           style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 16.5,
                               fontWeight: tabIndex == 1
                                   ? FontWeight.w600
                                   : FontWeight.w400),
@@ -81,7 +81,7 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
                         child: Text(
                           "Popular",
                           style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 16.5,
                               fontWeight: tabIndex == 2
                                   ? FontWeight.w600
                                   : FontWeight.w400),
@@ -92,7 +92,7 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
                         child: Text(
                           "All",
                           style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 16.5,
                               fontWeight: tabIndex == 3
                                   ? FontWeight.w600
                                   : FontWeight.w400),
@@ -103,7 +103,7 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
                         child: Text(
                           "Follow",
                           style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 16.5,
                               fontWeight: tabIndex == 4
                                   ? FontWeight.w600
                                   : FontWeight.w400),
@@ -112,7 +112,7 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
                     ],
                   ),
                 ),
-                const TalktimePriceWidget(),
+                const SizedBox(width: 50, child: TalktimePriceWidget()),
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(

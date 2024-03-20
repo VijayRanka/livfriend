@@ -1,15 +1,15 @@
-class TalktimeModel {
+class TalktimeListModel {
   final bool? status;
   final String? message;
   final List<TalktimeDetails>? talktimeDetails;
 
-  TalktimeModel({
+  TalktimeListModel({
     this.status,
     this.message,
     this.talktimeDetails,
   });
 
-  TalktimeModel.fromJson(Map<String, dynamic> json)
+  TalktimeListModel.fromJson(Map<String, dynamic> json)
       : status = json['status'] as bool?,
         message = json['message'] as String?,
         talktimeDetails = (json['talktime_details'] as List?)?.map((dynamic e) => TalktimeDetails.fromJson(e as Map<String,dynamic>)).toList();
@@ -22,11 +22,11 @@ class TalktimeModel {
 }
 
 class TalktimeDetails {
-  final String? id;
-  final String? amount;
-  final String? given;
-  final String? isBest;
-  final String? activestatus;
+  final int? id;
+  final int? amount;
+  final int? given;
+  final int? isBest;
+  final int? activestatus;
 
   TalktimeDetails({
     this.id,
@@ -37,11 +37,11 @@ class TalktimeDetails {
   });
 
   TalktimeDetails.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as String?,
-        amount = json['amount'] as String?,
-        given = json['given'] as String?,
-        isBest = json['is_best'] as String?,
-        activestatus = json['activestatus'] as String?;
+      : id = json['id'] as int?,
+        amount = json['amount'] as int?,
+        given = json['given'] as int?,
+        isBest = json['is_best'] as int?,
+        activestatus = json['activestatus'] as int?;
 
   Map<String, dynamic> toJson() => {
     'id' : id,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:livefriend/screens/common_widgets/common_app_bar.dart';
+import 'package:livefriend/screens/common_widgets/talk_time_total_text.dart';
 import 'package:livefriend/screens/settings/settings_screen.dart';
 import 'package:livefriend/screens/settings/single_settings_widget.dart';
 import 'package:livefriend/screens/talktime/talk_time_history.dart';
@@ -116,14 +117,11 @@ class ProfileWidget extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const TalktimeScreen()));
           },
           title: "Talktime",
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Text(
-              "\$0",
-              style:
-                  TextStyle(color: Colors.green, fontWeight: FontWeight.w500),
-            ),
-          ),
+          child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: TalkTimeTotalText(
+                  textStyle: TextStyle(
+                      color: Colors.green, fontWeight: FontWeight.w500))),
         ),
         const SingleSettingsWidget(title: "Levels"),
         const SingleSettingsWidget(title: "Rate Us"),

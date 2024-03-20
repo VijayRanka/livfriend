@@ -75,7 +75,7 @@ class GirlListItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const GirlDetailsScreen()));
+            MaterialPageRoute(builder: (_) =>  GirlDetailsScreen(girlId: girlId,)));
       },
       child: Container(
         alignment: Alignment.center,

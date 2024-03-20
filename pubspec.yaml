@@ -47,6 +47,7 @@ dependencies:
   otp_text_field:
   lottie:
   firebase_messaging:
+  video_player:
 
 dev_dependencies:
   flutter_test:

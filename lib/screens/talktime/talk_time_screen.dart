@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:livefriend/bloc/talktime_list_cubit/talktime_list_cubit.dart';
+import 'package:livefriend/model/talktime_list_model.dart';
 import 'package:livefriend/screens/common_widgets/common_app_bar.dart';
+import 'package:livefriend/screens/common_widgets/talk_time_total_text.dart';
+import 'package:livefriend/screens/talktime/price_widget.dart';
 
-class TalktimeScreen extends StatelessWidget {
+class TalktimeScreen extends StatefulWidget {
   const TalktimeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<TalktimeScreen> createState() => _TalktimeScreenState();
+}
+
+class _TalktimeScreenState extends State<TalktimeScreen> {
+  TalktimeDetails? selectedTalkTime;
+
+  @override
+  void initState() {
+    initViews();
+    super.initState();
+  }
+
+  void initViews() {
+    Future.delayed(Duration.zero, () {
+      BlocProvider.of<TalktimeListCubit>(context).getTalkTimeList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +42,14 @@ class TalktimeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TotalTalkTime(),
-                  TalktimeList(),
+                  const TotalTalkTime(),
+                  TalktimeList(
+                    onTap: (TalktimeDetails value) {
+                      setState(() {
+                        selectedTalkTime = value;
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
@@ -27,7 +57,7 @@ class TalktimeScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(color: Colors.white, boxShadow: [
               BoxShadow(
-                  offset: Offset(-10, 0),
+                  offset: const Offset(-10, 0),
                   blurRadius: 10,
                   color: Colors.black.withOpacity(0.5))
             ]),
@@ -61,14 +91,16 @@ class TalktimeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                              offset: Offset(0, 10),
+                              offset: const Offset(0, 10),
                               blurRadius: 10,
                               color: Colors.black.withOpacity(0.3))
                         ],
                         gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Colors.green[300]!, Colors.green[500]!])),
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: selectedTalkTime != null
+                                ? [Colors.green[300]!, Colors.green[500]!]
+                                : [Colors.grey[500]!, Colors.grey[700]!])),
                     child: const Text(
                       "Continue",
                       textAlign: TextAlign.center,
@@ -100,20 +132,18 @@ class TotalTalkTime extends StatelessWidget {
       padding: const EdgeInsets.all(15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: const [
           Text(
             "Talktime",
             style: TextStyle(
                 color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 17),
           ),
-          const SizedBox(
+          SizedBox(
             height: 5,
           ),
-          Text(
-            '\$0',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(
+          TalkTimeTotalText(
+              textStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+          SizedBox(
             height: 5,
           ),
         ],
@@ -123,193 +153,67 @@ class TotalTalkTime extends StatelessWidget {
 }
 
 class TalktimeList extends StatefulWidget {
-  const TalktimeList({Key? key}) : super(key: key);
+  final Function(TalktimeDetails talktime)? onTap;
+
+  const TalktimeList({this.onTap, Key? key}) : super(key: key);
 
   @override
   State<TalktimeList> createState() => _TalktimeListState();
 }
 
 class _TalktimeListState extends State<TalktimeList> {
-  int selectedPrice = 1;
+  int selectedPrice = -1;
 
   @override
   Widget build(BuildContext context) {
-    List<List<int>> priceList = [
-      [1, 2, 3],
-      [4, 5, 6],
-      [7, 8, 9],
-    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0),
           child: Text(
             "Add Talktime",
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
           ),
         ),
-        ListView.builder(
-            padding: const EdgeInsets.all(0),
-            itemCount: priceList.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) {
-              double height = 160;
-              return SizedBox(
-                  height: height,
-                  child: Row(
-                      children: priceList[index]
-                          .asMap()
-                          .map(
-                            (key, value) => MapEntry(
-                              key,
-                              PriceItem(
-                                  mainIndex: index,
-                                  insideIndex: key,
-                                  price: value,
-                                  height: height,
-                                  onTap: () {
-                                    setState(() {
-                                      selectedPrice = priceList[index][key];
-                                    });
-                                  },
-                                  selectedPrice: selectedPrice),
-                            ),
-                          )
-                          .values
-                          .toList()));
-            })
+        BlocBuilder<TalktimeListCubit, TalktimeListState>(
+          builder: (context, state) {
+            List<TalktimeDetails>? talktimeList = const [];
+            if (state is TalktimeListLoaded) {
+              talktimeList = state.talktimeList;
+            }
+            return state is TalktimeListLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : (talktimeList != null && talktimeList.isNotEmpty)
+                    ? GridView.count(
+                        padding: const EdgeInsets.all(0),
+                        childAspectRatio: 0.75,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 3,
+                        children: List.generate((talktimeList.length), (index) {
+                          return PriceItem(
+                              mainIndex: index,
+                              talktime: talktimeList![index],
+                              onTap: () {
+                                setState(() {
+                                  selectedPrice = talktimeList![index].amount!;
+                                });
+                                if (widget.onTap != null) {
+                                  widget.onTap!(talktimeList![index]);
+                                }
+                              },
+                              selectedPrice: selectedPrice);
+                        }))
+                    : const Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Center(child: Text("No Talktime Found")),
+                      );
+          },
+        )
       ],
-    );
-  }
-}
-
-class PriceItem extends StatelessWidget {
-  final int mainIndex, insideIndex;
-  final int price, selectedPrice;
-  final double height;
-  final Function()? onTap;
-
-  const PriceItem(
-      {this.mainIndex = 0,
-      this.insideIndex = 0,
-      this.selectedPrice = 0,
-      this.onTap,
-      this.height = 0,
-      this.price = 0,
-      Key? key})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          margin: EdgeInsets.only(
-              left: insideIndex == 0 ? 10 : 0,
-              right: 10,
-              bottom: 10,
-              top: mainIndex == 0 ? 10 : 0),
-          height: height,
-          decoration: BoxDecoration(
-              border: Border.all(
-                  color: selectedPrice == price
-                      ? Colors.red[800]!
-                      : Colors.grey[300]!,
-                  width: 1),
-              borderRadius: BorderRadius.circular(10)),
-          child: Column(
-            children: [
-              Expanded(
-                flex: 5,
-                child: Container(
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10))),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              color: Colors.red[800]!,
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                bottomRight: Radius.circular(10),
-                              )),
-                          child: const Text(
-                            "Best",
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 20.0, bottom: 10),
-                              child: Text("Get"),
-                            ),
-                            Text(
-                              "\$270",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: selectedPrice == price
-                        ? Colors.red[800]!
-                        : Colors.yellow[700],
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(5),
-                      bottomRight: Radius.circular(5),
-                    ),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          "Pay",
-                          style: TextStyle(
-                              color: selectedPrice == price
-                                  ? Colors.white
-                                  : Colors.black),
-                        ),
-                        Text(
-                          "\$270",
-                          style: TextStyle(
-                              color: selectedPrice == price
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:livefriend/bloc/talktime_cubit/talktime_cubit.dart';
 import 'package:livefriend/screens/dashboard/girls_widget.dart';
 import 'package:livefriend/screens/message/message_screen.dart';
 import 'package:livefriend/screens/profile/profile_widget.dart';
@@ -12,6 +14,18 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int tabIndex = 0;
+
+  @override
+  void initState() {
+    initViews();
+    super.initState();
+  }
+
+  void initViews(){
+    Future.delayed(Duration.zero,(){
+      BlocProvider.of<TalktimeCubit>(context).getUserTalkTime();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

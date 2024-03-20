@@ -3,9 +3,11 @@ part of 'talktime_cubit.dart';
 @immutable
 abstract class TalktimeState {}
 
-class TalktimeInitial extends TalktimeState {
+class TalktimeLoaded extends TalktimeState {
   final int talktime;
-  final List<TalktimeModel> talkTimeList;
+  final List<Talktime> talkTimeList;
 
-  TalktimeInitial({this.talktime = 0, this.talkTimeList = const []});
+  TalktimeLoaded({this.talktime = 0, this.talkTimeList = const []});
 }
+
+class TalktimeLoading extends TalktimeState {}
