@@ -1,10 +1,17 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:livefriend/bloc/talktime_list_cubit/talktime_list_cubit.dart';
+import 'package:livefriend/common/constants.dart';
+import 'package:livefriend/common/preference_utils.dart';
 import 'package:livefriend/model/talktime_list_model.dart';
 import 'package:livefriend/screens/common_widgets/common_app_bar.dart';
 import 'package:livefriend/screens/common_widgets/talk_time_total_text.dart';
 import 'package:livefriend/screens/talktime/price_widget.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 
 class TalktimeScreen extends StatefulWidget {
   const TalktimeScreen({Key? key}) : super(key: key);
@@ -16,10 +23,107 @@ class TalktimeScreen extends StatefulWidget {
 class _TalktimeScreenState extends State<TalktimeScreen> {
   TalktimeDetails? selectedTalkTime;
 
+  String environment = "SANDBOX", appId = "", merchantId = "PGTESTPAYUAT";
+
+  // merchantId="M22K5630WRRXG";
+  bool enableLogging = true;
+  String checkSum = "";
+
+  String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
+
+  // String saltKey = "10e836fd-4176-4fbc-a381-fc2ab74c0002";
+  String saltIndex = "1";
+
+  String callbackUrl =
+      "https://webhook.site/bf0504bb-581b-40f2-a7f0-e1032bb065f8";
+  String body = "";
+  Object? result;
+  String apiEndPoint = "/pg/v1/pay";
+
   @override
   void initState() {
+    phonepeInit();
     initViews();
     super.initState();
+  }
+
+  void phonepeInit() {
+    // PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging).then((value){
+    //   result="phone pe initialized $value";
+    // });
+    PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
+        .then((val) => {
+              setState(() {
+                result = 'PhonePe SDK Initialized - $val';
+                print("result - $result");
+              })
+            })
+        .catchError((error) {
+      handleError(error);
+      // handle the error
+      return <dynamic>{};
+    });
+  }
+
+  void handleError(error) {
+    result = {"error": error};
+  }
+
+  getCheckSum() {
+    final Map<String, dynamic> requestData = {
+      "merchantId": merchantId,
+      "merchantTransactionId": "transaction_123",
+      "merchantUserId": "",
+      "amount": (selectedTalkTime?.amount ?? 10) * 100,
+      "mobileNumber": PreferenceUtils.getString(Constants.userMobile,
+              defValue: "9999999999") ??
+          "9999999999",
+      "callbackUrl": callbackUrl,
+      "paymentInstrument": {"type": "PAY_PAGE"}
+    };
+    // final Map<String, dynamic> requestData = {
+    //   "merchantId": merchantId,
+    //   "merchantTransactionId": "MT7850590068188104",
+    //   "merchantUserId": "MUID123",
+    //   "amount": 10000,
+    //   "callbackUrl": callbackUrl,
+    //   "mobileNumber": "9999999999",
+    //   "paymentInstrument": {
+    //     "type": "PAY_PAGE"
+    //   }
+    // };
+    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+    checkSum =
+        "${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey))}###$saltIndex";
+    return base64Body;
+  }
+
+  void startPGTransaction() async {
+    getCheckSum();
+    PhonePePaymentSdk.startTransaction(
+            getCheckSum(), callbackUrl, checkSum, "com.phonepe.simulator")
+        .then((response) => {
+              setState(() {
+                if (response != null) {
+                  String status = response['status'].toString();
+                  String error = response['error'].toString();
+                  if (status == 'SUCCESS') {
+                    // "Flow Completed - Status: Success!";
+                    Fluttertoast.showToast(msg: "Success");
+                  } else {
+                    // "Flow Completed - Status: $status and Error: $error";
+                    print("error: $error");
+                    Fluttertoast.showToast(msg: "Failed");
+                  }
+                } else {
+                  // "Flow Incomplete";
+                }
+              })
+            })
+        .catchError((error) {
+      // handleError(error)
+      return <dynamic>{};
+    });
   }
 
   void initViews() {
@@ -55,12 +159,14 @@ class _TalktimeScreenState extends State<TalktimeScreen> {
             ),
           ),
           Container(
-            decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(
-                  offset: const Offset(-10, 0),
-                  blurRadius: 10,
-                  color: Colors.black.withOpacity(0.5))
-            ]),
+            decoration: BoxDecoration(
+                color: Constants.darkMode ? Colors.black : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      offset: const Offset(-10, 0),
+                      blurRadius: 10,
+                      color: Colors.black.withOpacity(0.5))
+                ]),
             alignment: Alignment.center,
             child: Column(
               children: [
@@ -81,7 +187,9 @@ class _TalktimeScreenState extends State<TalktimeScreen> {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    startPGTransaction();
+                  },
                   child: Container(
                     alignment: Alignment.center,
                     margin: const EdgeInsets.all(15),

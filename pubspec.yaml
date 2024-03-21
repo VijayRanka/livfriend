@@ -48,6 +48,8 @@ dependencies:
   lottie:
   firebase_messaging:
   video_player:
+  phonepe_payment_sdk:
+  crypto:
 
 dev_dependencies:
   flutter_test:
