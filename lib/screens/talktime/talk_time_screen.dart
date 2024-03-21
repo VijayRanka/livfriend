@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:livefriend/bloc/talktime_cubit/talktime_cubit.dart';
 import 'package:livefriend/bloc/talktime_list_cubit/talktime_list_cubit.dart';
 import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/common/preference_utils.dart';
@@ -69,10 +71,11 @@ class _TalktimeScreenState extends State<TalktimeScreen> {
     result = {"error": error};
   }
 
-  getCheckSum() {
+  getCheckSum({String userId = "-"}) {
     final Map<String, dynamic> requestData = {
       "merchantId": merchantId,
-      "merchantTransactionId": "transaction_123",
+      "merchantTransactionId":
+          "Trans${Random().nextInt(99999)}--$userId--${selectedTalkTime?.id ?? 0}--${selectedTalkTime?.given ?? 0}",
       "merchantUserId": "",
       "amount": (selectedTalkTime?.amount ?? 10) * 100,
       "mobileNumber": PreferenceUtils.getString(Constants.userMobile,
@@ -81,39 +84,27 @@ class _TalktimeScreenState extends State<TalktimeScreen> {
       "callbackUrl": callbackUrl,
       "paymentInstrument": {"type": "PAY_PAGE"}
     };
-    // final Map<String, dynamic> requestData = {
-    //   "merchantId": merchantId,
-    //   "merchantTransactionId": "MT7850590068188104",
-    //   "merchantUserId": "MUID123",
-    //   "amount": 10000,
-    //   "callbackUrl": callbackUrl,
-    //   "mobileNumber": "9999999999",
-    //   "paymentInstrument": {
-    //     "type": "PAY_PAGE"
-    //   }
-    // };
     String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
     checkSum =
         "${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey))}###$saltIndex";
     return base64Body;
   }
 
-  void startPGTransaction() async {
-    getCheckSum();
+  void startPGTransaction(String user_id) async {
+    var getCheck = getCheckSum(userId: user_id);
     PhonePePaymentSdk.startTransaction(
-            getCheckSum(), callbackUrl, checkSum, "com.phonepe.simulator")
+            getCheck, callbackUrl, checkSum, "com.phonepe.simulator")
         .then((response) => {
               setState(() {
                 if (response != null) {
                   String status = response['status'].toString();
                   String error = response['error'].toString();
                   if (status == 'SUCCESS') {
-                    // "Flow Completed - Status: Success!";
-                    Fluttertoast.showToast(msg: "Success");
+                    BlocProvider.of<TalktimeCubit>(context).getUserTalkTime();
                   } else {
                     // "Flow Completed - Status: $status and Error: $error";
                     print("error: $error");
-                    Fluttertoast.showToast(msg: "Failed");
+                    Fluttertoast.showToast(msg: "Recharge Failed");
                   }
                 } else {
                   // "Flow Incomplete";
@@ -188,7 +179,14 @@ class _TalktimeScreenState extends State<TalktimeScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    startPGTransaction();
+                    String user_id = PreferenceUtils.getString(Constants.userID,
+                            defValue: "-") ??
+                        "-";
+                    if (user_id == "-") {
+                      Fluttertoast.showToast(msg: "No User found");
+                    } else {
+                      startPGTransaction(user_id);
+                    }
                   },
                   child: Container(
                     alignment: Alignment.center,

@@ -20,17 +20,37 @@ class TalktimeListCubit extends Cubit<TalktimeListState> {
       Fluttertoast.showToast(msg: "No user found");
       return;
     }
-    emit(TalktimeListLoading());
+    var currentState=state;
+    List<TalktimeDetails>? tempList=[];
+    if(currentState is TalktimeListLoaded){
+      if((currentState.talktimeList ?? []).isEmpty){
+        emit(TalktimeListLoading());
+      }else{
+        tempList=currentState.talktimeList;
+      }
+    }else {
+      emit(TalktimeListLoading());
+    }
     await APICalls.getResponse(
         url: Constants.mainServerURL,
         isPost: true,
-        body: {"talktime_api": "1", "user_id": userID}).then((response) {
+        body: {"talktime_api": "1", "user_id": userID}).then((response) async{
       TalktimeListModel talkTimeModel =
           TalktimeListModel.fromJson(json.decode(response.body));
-      emit(TalktimeListLoaded(talktimeList: talkTimeModel.talktimeDetails));
+      if(tempList?.isNotEmpty ?? false){
+        if(tempList?.length!=talkTimeModel.talktimeDetails?.length){
+          emit(TalktimeListLoading());
+          await Future.delayed(const Duration(milliseconds: 500),(){
+            emit(TalktimeListLoaded(talktimeList: talkTimeModel.talktimeDetails));
+          });
+        }
+      }else{
+        emit(TalktimeListLoaded(talktimeList: talkTimeModel.talktimeDetails));
+      }
+
     }).onError((error, stackTrace) {
       print(error);
-      emit(TalktimeListLoading());
+      emit(TalktimeListLoaded());
     });
   }
 }
