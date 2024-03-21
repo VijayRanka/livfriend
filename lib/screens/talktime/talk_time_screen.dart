@@ -25,15 +25,15 @@ class TalktimeScreen extends StatefulWidget {
 class _TalktimeScreenState extends State<TalktimeScreen> {
   TalktimeDetails? selectedTalkTime;
 
-  String environment = "SANDBOX", appId = "", merchantId = "PGTESTPAYUAT";
+  String environment = "PRODUCTION", appId = "", merchantId = "M22K5630WRRXG";
 
-  // merchantId="M22K5630WRRXG";
+  // merchantId="M22K5630WRRXG"; PGTESTPAYUAT
   bool enableLogging = true;
   String checkSum = "";
 
-  String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
+  // String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
 
-  // String saltKey = "10e836fd-4176-4fbc-a381-fc2ab74c0002";
+  String saltKey = "10e836fd-4176-4fbc-a381-fc2ab74c0002";
   String saltIndex = "1";
 
   String callbackUrl =
@@ -76,8 +76,8 @@ class _TalktimeScreenState extends State<TalktimeScreen> {
       "merchantId": merchantId,
       "merchantTransactionId":
           "Trans${Random().nextInt(99999)}--$userId--${selectedTalkTime?.id ?? 0}--${selectedTalkTime?.given ?? 0}",
-      "merchantUserId": "",
-      "amount": (selectedTalkTime?.amount ?? 10) * 100,
+      "merchantUserId": "MUID${Random().nextInt(99)}",
+      "amount": 100,
       "mobileNumber": PreferenceUtils.getString(Constants.userMobile,
               defValue: "9999999999") ??
           "9999999999",
