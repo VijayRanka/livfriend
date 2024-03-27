@@ -7,18 +7,21 @@ class TalktimePriceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      padding: EdgeInsets.all(0),
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         Navigator.push(
             context, MaterialPageRoute(builder: (_) => const TalktimeScreen()));
       },
-      icon: Container(
-        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 7),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: Colors.white)),
-        child: const TalkTimeTotalText(textStyle: TextStyle(color: Colors.white)),
+            border: Border.all(color: Colors.white, width: 2)),
+        child: const TalkTimeTotalText(
+            textStyle: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                fontSize: 15)),
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:livefriend/bloc/top_rated_cubit/top_rated_cubit.dart';
-import 'package:livefriend/screens/common_widgets/status_bar_container.dart';
 import 'package:livefriend/screens/dashboard/talktime_price_widget.dart';
 import 'package:livefriend/screens/dashboard_girls_section/all_girls_dashboard.dart';
 import 'package:livefriend/screens/dashboard_girls_section/follow_girl_section.dart';
@@ -38,7 +37,6 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
       initialIndex: tabIndex,
       child: Column(
         children: [
-          const StatusBarContainer(),
           Container(
             color: Colors.green,
             child: Row(
@@ -112,11 +110,11 @@ class _GirlsDashboardWidgetState extends State<GirlsDashboardWidget> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 50, child: TalktimePriceWidget()),
+                TalktimePriceWidget(),
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(
-                    Icons.sort,
+                    Icons.whatshot_outlined,
                     color: Colors.white,
                   ),
                 ),

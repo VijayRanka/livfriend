@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (jsonResponse['status']) {
           FocusScope.of(context).unfocus();
 
-          Fluttertoast.showToast(msg: jsonResponse['message']);
+          Fluttertoast.showToast(msg: "${jsonResponse['message']} $otp");
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => OtpVerifyScreen(
                     mobileNumber: mobileNumber,

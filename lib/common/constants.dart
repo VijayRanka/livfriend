@@ -14,7 +14,7 @@ class Constants {
   static String convertInWebApp = 'Convert in Web App';
   static String shareTheApp = 'Share The App';
   static String pleaseDoNotTrust =
-      "Please do not trust fraudulent information such as money transfer, lottery etc from strangers. Please do ot share any personal information such as passwords, mobile numbers, otp etc. Please do not engage in nudity, pornography or any obscene acts";
+      "Please do not trust fraudulent information such as money transfer, lottery etc from strangers. Please do not share any personal information such as passwords, mobile numbers, otp etc. Please do not engage in nudity, pornography or any obscene acts";
   static String noInternetConnection =
       'Your Internet Connection\nmay not be active';
 

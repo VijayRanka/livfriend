@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:livefriend/common/constants.dart';
 import 'package:livefriend/model/talktime_list_model.dart';
 
 class PriceItem extends StatelessWidget {
@@ -21,22 +22,22 @@ class PriceItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.only(
-            left: 10, right: 10, bottom: 10, top: mainIndex > 2 ? 0 : 10),
+            left: 10, right: 10, bottom: mainIndex<3?5:10, top: 10),
         height: 150,
         decoration: BoxDecoration(
             border: Border.all(
                 color: selectedPrice == talktime.amount
                     ? Colors.red[800]!
                     : Colors.grey[300]!,
-                width: 1),
+                width:  selectedPrice == talktime.amount?4:1),
             borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
             Expanded(
               flex: 5,
               child: Container(
-                decoration: const BoxDecoration(
-                    color: Colors.white,
+                decoration:  BoxDecoration(
+                    color: Constants.darkMode?Colors.black:Colors.white,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10))),
@@ -50,8 +51,8 @@ class PriceItem extends StatelessWidget {
                               padding: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                   color: Colors.red[800]!,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(8),
+                                  borderRadius:  BorderRadius.only(
+                                    topLeft: Radius.circular( selectedPrice == talktime.amount?5:10),
                                     bottomRight: Radius.circular(10),
                                   )),
                               child: const Text(
@@ -67,13 +68,12 @@ class PriceItem extends StatelessWidget {
                           Padding(
                             padding:
                                 const EdgeInsets.only(top: 20.0, bottom: 10),
-                            child: Text("Get"),
+                            child: Text("Get",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),),
                           ),
                           Text(
                             "₹${talktime.given}",
                             style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w600,fontSize: 18),
                           ),
                         ],
                       ),

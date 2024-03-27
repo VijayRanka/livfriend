@@ -156,7 +156,7 @@ class _TalktimeScreenState extends State<TalktimeScreen> {
                   BoxShadow(
                       offset: const Offset(-10, 0),
                       blurRadius: 10,
-                      color: Colors.black.withOpacity(0.5))
+                      color: Constants.darkMode?Colors.white.withOpacity(0.5):Colors.black.withOpacity(0.5))
                 ]),
             alignment: Alignment.center,
             child: Column(

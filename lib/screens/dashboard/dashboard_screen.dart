@@ -29,57 +29,59 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: DefaultTabController(
-        length: 3,
-        initialIndex: tabIndex,
-        child: Scaffold(
-          body: Column(
-            children: [
-              const Expanded(
-                child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    GirlsDashboardWidget(),
-                    MessageScreen(),
-                    ProfileWidget(),
-                  ],
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: DefaultTabController(
+          length: 3,
+          initialIndex: tabIndex,
+          child: Scaffold(
+            body: Column(
+              children: [
+                const Expanded(
+                  child: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      GirlsDashboardWidget(),
+                      MessageScreen(),
+                      ProfileWidget(),
+                    ],
+                  ),
                 ),
-              ),
-              Divider(
-                height: 1,
-                color: Colors.grey[400],
-              )
-            ],
-          ),
-          bottomNavigationBar: TabBar(
-            unselectedLabelColor: Colors.grey,
-            labelColor: Colors.green,
-            indicatorColor: Colors.transparent,
-            tabs: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Icon(
-                  Icons.video_call,
-                  size: tabIndex == 0 ? 35 : 30,
+                Divider(
+                  height: 1,
+                  color: Colors.grey[400],
+                )
+              ],
+            ),
+            bottomNavigationBar: TabBar(
+              unselectedLabelColor: Colors.grey,
+              labelColor: Colors.green,
+              indicatorColor: Colors.transparent,
+              tabs: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Icon(
+                    Icons.video_call,
+                    size: tabIndex == 0 ? 35 : 30,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Icon(
-                  Icons.message,
-                  size: tabIndex == 1 ? 35 : 30,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Icon(
+                    Icons.message,
+                    size: tabIndex == 1 ? 35 : 30,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Icon(
-                  Icons.person,
-                  size: tabIndex == 2 ? 35 : 30,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Icon(
+                    Icons.person,
+                    size: tabIndex == 2 ? 35 : 30,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
